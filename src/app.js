@@ -1,12 +1,17 @@
-export class App {
-  configureRouter(config, router) {
-    config.title = 'Aurelia';
-    config.map([
-      { route: ['', 'welcome'], name: 'welcome',      moduleId: 'welcome',      nav: true, title: 'Welcome' },
-      { route: 'users',         name: 'users',        moduleId: 'users',        nav: true, title: 'Github Users' },
-      { route: 'child-router',  name: 'child-router', moduleId: 'child-router', nav: true, title: 'Child Router' }
-    ]);
+import {inject, TemplatingEngine} from 'aurelia-framework';
 
-    this.router = router;
+@inject(TemplatingEngine)
+export class App {
+  message = 'Hello World';
+
+  constructor(templatingEngine) {
+    this.templatingEngine = templatingEngine;
+    // this.viewModelInstance = new window.Button_1();
+  }
+
+  attached() {
+    let elem = document.querySelector("*[aspx-enhance] button");
+    console.log(this.viewModelInstance);
+    this.templatingEngine.enhance({element: elem, bindingContext: window.Button_1});
   }
 }
