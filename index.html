@@ -8,10 +8,15 @@
 </head>
 
 <body>
+  Here's some content. It isn't handled by Aurelia.
   <div aspx-enhance="Button_1">
+    But this content is.
     <button click.delegate="showMessage()">${buttonText}</button>
   </div>
+
+  This content isn't handled by Aurelia.
   <div aspx-enhance="Button_2">
+    This content is.
     <button click.delegate="showMessage()">${buttonText}</button>
   </div>
 
