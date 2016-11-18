@@ -20,8 +20,9 @@
     <button click.delegate="showMessage()">${buttonText}</button>
   </div>
 
-  <script src="jspm_packages/system.js"></script>
-  <script src="config.js"></script>
+    <script src="scripts/system.js"></script>
+    <script src="scripts/config-esnext.js"></script>
+    <script src="scripts/aurelia-core.min.js"></script>
   <script>
     window.aureliaViewModelDefinitions = {};
     window.aureliaViewModelDefinitions.Button_1 = class {
@@ -46,15 +47,13 @@
 
 Promise.all([
   System.import('aurelia-bootstrapper'),
-  System.import('aurelia-templating')
+  System.import('aurelia-framework')
 ])
     .then(modules => {
       const bootstrapper = modules[0];
       const templatingEngineModule = modules[1].TemplatingEngine;
       bootstrapper.bootstrap(function(aurelia) {
-        aurelia.use
-          .standardConfiguration()
-          .developmentLogging();
+        aurelia.use.basicConfiguration();
 
         let elements = document.querySelectorAll("*[aspx-enhance]");
 
