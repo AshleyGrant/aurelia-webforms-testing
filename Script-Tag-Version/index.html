@@ -20,59 +20,86 @@
     <button click.delegate="showMessage()">${buttonText}</button>
   </div>
 
-    <script src="scripts/system.js"></script>
-    <script src="scripts/config-esnext.js"></script>
-    <script src="scripts/aurelia-core.min.js"></script>
+  This below content uses a string view template
+
+  <div aspx-enhance="Button_3"></div>
+
+  <script src="scripts/system.js"></script>
+  <script src="scripts/config-esnext.js"></script>
+  <script src="scripts/aurelia-core.js"></script>
   <script>
-    window.aureliaViewModelDefinitions = {};
-    window.aureliaViewModelDefinitions.Button_1 = class {
-      constructor() {
-        this.buttonText = 'Click me 1';
-      }
+window.aureliaViewModelDefinitions = {};
+window.aureliaViewModelDefinitions.Button_1 = class {
+  constructor() {
+    this.buttonText = 'Click me 1';
+  }
 
-      showMessage() {
-        alert("I was clicked 1");
-      }
-    };
+  showMessage() {
+    alert("I was clicked 1");
+  }
+};
 
-    window.aureliaViewModelDefinitions.Button_2 = class {
-      constructor() {
-        this.buttonText = 'Click me 2';
-      }
+window.aureliaViewModelDefinitions.Button_2 = class {
+  constructor() {
+    this.buttonText = 'Click me 2';
+  }
 
-      showMessage() {
-        alert("I was clicked 2");
-      }
-    };
+  showMessage() {
+    alert("I was clicked 2");
+  }
+};
 
-Promise.all([
-  System.import('aurelia-bootstrapper'),
-  System.import('aurelia-framework')
-])
-    .then(modules => {
-      const bootstrapper = modules[0];
-      const templatingEngineModule = modules[1].TemplatingEngine;
-      bootstrapper.bootstrap(function(aurelia) {
-        aurelia.use.basicConfiguration();
+System.import('aurelia-bootstrapper')
+.then(bootstrapper => {
+  bootstrapper.bootstrap(function(aurelia) {
+    aurelia.use
+    .basicConfiguration()
+    .developmentLogging();
 
+    aurelia.start().then(app => {
+      System.import('aurelia-framework').then( framework => {
+        const TemplatingEngine = framework.TemplatingEngine;
+        const InlineViewStrategy = framework.InlineViewStrategy;
+        // const inlineView = framework.inlineView;
+
+        window.aureliaViewModelDefinitions.Button_3 = class {
+          constructor() {
+            this.buttonText = 'Click me 3';
+          }
+
+          getViewStrategy() {
+            this.viewStrategy = new InlineViewStrategy('<template>I\'m from a string template. <button click.delegate="showMessage()">${buttonText}</button></template>');
+            return this.viewStrategy;
+          }
+
+          showMessage() {
+            alert("I was clicked 3");
+          }
+        };
+
+        // inlineView('<template>I\'m from a string template. <button click.delegate="showMessage()">${buttonText}</button></template>')(Button_3);
+
+        let templatingEngine = app.container.get(TemplatingEngine);
         let elements = document.querySelectorAll("*[aspx-enhance]");
 
-        aurelia.start().then(app => {
-          let templatingEngine = app.container.get(templatingEngineModule);
+        for(const element of elements) {
+          const vmClassName = element.getAttribute('aspx-enhance');
 
-          for(const element of elements) {
-            const vmClassName = element.getAttribute('aspx-enhance');
+          const vm = new window.aureliaViewModelDefinitions[vmClassName];
 
-            const vm = new window.aureliaViewModelDefinitions[vmClassName];
-            templatingEngine.enhance({
-              container: app.container,
-              element: element,
-              resources: app.resources,
-              bindingContext: vm});
-          }
-        });
+          const viewStrategy = vm.getViewStrategy ? vm.getViewStrategy() : null;
+
+          templatingEngine.enhance({
+            container: app.container,
+            element: element,
+            resources: app.resources,
+            bindingContext: vm
+          });
+        }
       });
     });
+  });
+});
   </script>
 
 </body>
