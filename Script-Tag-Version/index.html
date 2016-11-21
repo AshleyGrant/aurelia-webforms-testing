@@ -8,100 +8,124 @@
 </head>
 
 <body>
-  Here's some content. It isn't handled by Aurelia.
-  <div aspx-enhance="Button_1">
+  <div>
+    Here's some content. It isn't handled by Aurelia.
+  </div>
+  <!--<button_1 aspx-enhance>
     But this content is.
     <button click.delegate="showMessage()">${buttonText}</button>
-  </div>
+  </button_1>-->
 
-  This content isn't handled by Aurelia.
-  <div aspx-enhance="Button_2">
-    This content is.
-    <button click.delegate="showMessage()">${buttonText}</button>
-  </div>
+  <button_1>
+    I'm not the string templates.
+  </button_1>
 
-  This below content uses a string view template
-
-  <div aspx-enhance="Button_3"></div>
+  <button-two>
+    Neither am I.
+  </button-two>
 
   <script src="scripts/system.js"></script>
   <script src="scripts/config-esnext.js"></script>
   <script src="scripts/aurelia-core.js"></script>
   <script>
-window.aureliaViewModelDefinitions = {};
-window.aureliaViewModelDefinitions.Button_1 = class {
-  constructor() {
-    this.buttonText = 'Click me 1';
-  }
 
-  showMessage() {
-    alert("I was clicked 1");
-  }
-};
+Promise.all([System.import('aurelia-bootstrapper'),System.import('aurelia-framework')])
+.then(([bootstrapper, framework]) => {
 
-window.aureliaViewModelDefinitions.Button_2 = class {
-  constructor() {
-    this.buttonText = 'Click me 2';
-  }
-
-  showMessage() {
-    alert("I was clicked 2");
-  }
-};
-
-System.import('aurelia-bootstrapper')
-.then(bootstrapper => {
-  bootstrapper.bootstrap(function(aurelia) {
+  bootstrapper.bootstrap((aurelia) => {
     aurelia.use
     .basicConfiguration()
     .developmentLogging();
 
+    configure(aurelia, framework);
+
     aurelia.start().then(app => {
-      System.import('aurelia-framework').then( framework => {
-        const TemplatingEngine = framework.TemplatingEngine;
-        const InlineViewStrategy = framework.InlineViewStrategy;
-        // const inlineView = framework.inlineView;
-
-        window.aureliaViewModelDefinitions.Button_3 = class {
-          constructor() {
-            this.buttonText = 'Click me 3';
-          }
-
-          getViewStrategy() {
-            this.viewStrategy = new InlineViewStrategy('<template>I\'m from a string template. <button click.delegate="showMessage()">${buttonText}</button></template>');
-            return this.viewStrategy;
-          }
-
-          showMessage() {
-            alert("I was clicked 3");
-          }
-        };
-
-        // inlineView('<template>I\'m from a string template. <button click.delegate="showMessage()">${buttonText}</button></template>')(Button_3);
-
-        let templatingEngine = app.container.get(TemplatingEngine);
-        let elements = document.querySelectorAll("*[aspx-enhance]");
-
-        for(const element of elements) {
-          const vmClassName = element.getAttribute('aspx-enhance');
-
-          const vm = new window.aureliaViewModelDefinitions[vmClassName];
-
-          const viewStrategy = vm.getViewStrategy ? vm.getViewStrategy() : null;
-
-          templatingEngine.enhance({
-            container: app.container,
-            element: element,
-            resources: app.resources,
-            bindingContext: vm
-          });
-        }
-      });
+        aurelia.enhance();
     });
   });
 });
-  </script>
 
+  function configure(aurelia, framework) {
+    const inlineView = framework.inlineView;
+
+    // begin generated code
+    var button_1 = function(){
+      function button_1() {
+        this.buttonText = 'Click me 1';
+      }
+
+      button_1.prototype.showMessage = function () {
+        alert("I was clicked 1");
+      }
+
+      return button_1;
+    }();
+    inlineView('<template>I\'m from a string template 1. <button click.delegate="showMessage()">${buttonText}</button></template>')(button_1);
+
+    System.set('button_1', System.newModule({
+      'button_1': button_1
+    }));
+
+
+    class ButtonTwo {
+      constructor() {
+        this.buttonText = 'Click me 2';
+      }
+
+      showMessage() {
+        alert("I was clicked 2");
+      }
+    }
+
+    System.set('button-two', System.newModule({
+      'ButtonTwo': ButtonTwo
+    }));
+
+    inlineView('<template>I\'m from a string template 2. <button click.delegate="showMessage()">${buttonText}</button></template>')(ButtonTwo);
+
+    aurelia.use.globalResources('button_1', 'button-two');
+    // end generated code
+  }
+
+        // aureliaViewModelDefinitions.Button_2 = class {
+        //   constructor() {
+        //     this.buttonText = 'Click me 2';
+        //   }
+
+        //   showMessage() {
+        //     alert("I was clicked 2");
+        //   }
+        // };
+
+
+        // aureliaViewModelDefinitions.Button_3 = class {
+        //   constructor() {
+        //     this.buttonText = 'Click me 3';
+        //   }
+
+        //   showMessage() {
+        //     alert("I was clicked 3");
+        //   }
+        // };
+
+        // inlineView('<template>I\'m from a string template. <button click.delegate="showMessage()">${buttonText}</button></template>')(aureliaViewModelDefinitions.Button_3);
+
+        // let templatingEngine = app.container.get(TemplatingEngine);
+        // let elements = document.querySelectorAll("*[aspx-enhance]");
+
+        // for(const element of elements) {
+        //   const vmClassName = element.getAttribute('aspx-enhance');
+
+        //   const vm = new aureliaViewModelDefinitions[vmClassName];
+
+        //   templatingEngine.enhance({
+        //     container: app.container,
+        //     element: element,
+        //     resources: app.resources,
+        //     bindingContext: vm
+        //   });
+        // }
+  </script>
 </body>
 
 </html>
