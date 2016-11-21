@@ -11,10 +11,6 @@
   <div>
     Here's some content. It isn't handled by Aurelia.
   </div>
-  <!--<button_1 aspx-enhance>
-    But this content is.
-    <button click.delegate="showMessage()">${buttonText}</button>
-  </button_1>-->
 
   <button_1>
     I'm not the string templates.
@@ -60,30 +56,13 @@ Promise.all([System.import('aurelia-bootstrapper'),System.import('aurelia-framew
 
       return button_1;
     }();
-    inlineView('<template>I\'m from a string template 1. <button click.delegate="showMessage()">${buttonText}</button></template>')(button_1);
+    inlineView('<template>I\'m from a string template 1. <slot></slot><button click.delegate="showMessage()">${buttonText}</button></template>')(button_1);
 
     System.set('button_1', System.newModule({
       'button_1': button_1
     }));
 
-
-    class ButtonTwo {
-      constructor() {
-        this.buttonText = 'Click me 2';
-      }
-
-      showMessage() {
-        alert("I was clicked 2");
-      }
-    }
-
-    System.set('button-two', System.newModule({
-      'ButtonTwo': ButtonTwo
-    }));
-
-    inlineView('<template>I\'m from a string template 2. <button click.delegate="showMessage()">${buttonText}</button></template>')(ButtonTwo);
-
-    aurelia.use.globalResources('button_1', 'button-two');
+    aurelia.use.globalResources('button_1')//, 'button-two');
     // end generated code
   }
 
