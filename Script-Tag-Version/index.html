@@ -12,13 +12,37 @@
     Here's some content. It isn't handled by Aurelia.
   </div>
 
-  <button_1>
-    I'm not the string templates.
-  </button_1>
 
-  <button-two>
-    Neither am I.
-  </button-two>
+  <mygrid>
+    <div>
+      <table cellspacing="0" rules="all" border="1" id="myGrid" style="border-collapse:collapse;">
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">First Order Date</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Jeff</td>
+          <td>Fritz</td>
+          <td>5/9/2006</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Mary</td>
+          <td>Contrary</td>
+          <td>5/27/2000</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Joe</td>
+          <td>Bag O&#39;Donuts</td>
+          <td>10/22/2003</td>
+        </tr>
+      </table>
+    </div>
+  </mygrid>
 
   <script src="scripts/system.js"></script>
   <script src="scripts/config-esnext.js"></script>
@@ -48,6 +72,12 @@ Promise.all([System.import('aurelia-bootstrapper'),System.import('aurelia-framew
     var button_1 = function(){
       function button_1() {
         this.buttonText = 'Click me 1';
+        this.columns = [
+          'ID',
+          'First Name',
+          'Last Name',
+          'First Order Date'
+        ];
       }
 
       button_1.prototype.showMessage = function () {
@@ -56,13 +86,46 @@ Promise.all([System.import('aurelia-bootstrapper'),System.import('aurelia-framew
 
       return button_1;
     }();
-    inlineView('<template>I\'m from a string template 1. <slot></slot><button click.delegate="showMessage()">${buttonText}</button></template>')(button_1);
+    inlineView('<template>I\'m from a string template 1. <slot></slot><button click.delegate="showMessage()">${buttonText}</button><ul><li repeat.for="column of columns">${column}</li></ul></template>')(button_1);
 
     System.set('button_1', System.newModule({
       'button_1': button_1
     }));
 
     aurelia.use.globalResources('button_1')//, 'button-two');
+
+    var mygrid = function() {
+      function mygrid() {
+        this.columns = [
+          'ID',
+          'First Name',
+          'Last Name',
+          'First Order Date'
+        ];
+      }
+
+      return mygrid;
+    }();
+
+    // inlineView('' +
+    // '<template>' +
+    // '  <table>' +
+    // '    <tr>' +
+    // '      <th repeat.for="column of columns">' +
+    // '        Header: ${column}' +
+    // '      </th>' +
+    // '    </tr>' +
+    // '    <tr>' +
+    // '      <td>' +
+    // '        Hello' +
+    // '      </td>' +
+    // '    </tr>' +
+    // '  </table>' +
+    // '</template' +
+    // '')(mygrid);
+    inlineView('<template><ul><li repeat.for="column of columns">${column}</li></ul></template>')(mygrid);
+    System.set('mygrid', System.newModule({ 'mygrid': mygrid }));
+    aurelia.use.globalResources('mygrid');
     // end generated code
   }
 
